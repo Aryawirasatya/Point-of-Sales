@@ -53,14 +53,9 @@
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-            <a href="index.html" class="logo">
-              <img
-                src="assets/img/kaiadmin/logo_light.svg" 
-                alt="navbar brand"
-                class="navbar-brand"
-                height="20"
-              />
-            </a>
+          <a href="{{ route('home') }}" class="logo">
+            <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand" height="20" />
+          </a>
             <div class="nav-toggle">
               <button class="btn btn-toggle toggle-sidebar">
                 <i class="gg-menu-right"></i>
@@ -92,17 +87,17 @@
                 <div class="collapse" id="dashboard">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="../demo1/index.html">
+                      <a href="../products">
                         <span class="sub-item">PRODUCT</span>
                       </a>
                     </li>
                     <li>
-                      <a href="../demo1/index.html">
-                        <span class="sub-item">PRODUCT</span>
+                      <a href="../categories">
+                        <span class="sub-item">KATEGORI</span>
                       </a>
                     </li>
                     <li>
-                      <a href="../demo1/index.html">
+                      <a href="../home">
                         <span class="sub-item">PRODUCT</span>
                       </a>
                     </li>
@@ -167,14 +162,10 @@
           <div class="main-header-logo">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="dark">
-              <a href="index.html" class="logo">
-                <img
-                  src="assets/img/kaiadmin/logo_light.svg"
-                  alt="navbar brand"
-                  class="navbar-brand"
-                  height="20"
-                />
-              </a>
+            <a href="{{ route('home') }}" class="logo">
+              <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand" height="20" />
+            </a>
+
               <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
                   <i class="gg-menu-right"></i>

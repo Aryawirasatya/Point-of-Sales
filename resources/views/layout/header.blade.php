@@ -9,7 +9,7 @@
     />
     <link
       rel="icon"
-      href="assets/img/kaiadmin/favicon.ico"
+      href="{{ asset('assets/img/kaiadmin/favicon.ico') }}"
       type="image/x-icon"
     />
 
@@ -25,7 +25,7 @@
             "Font Awesome 5 Brands",
             "simple-line-icons",
           ],
-          urls: ["assets/css/fonts.min.css"],
+          urls: ["{{ asset('assets/css/fonts.min.css') }}"],
         },
         active: function () {
           sessionStorage.fonts = true;
@@ -34,9 +34,15 @@
     </script>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ asset ('assets/css')}}/bootstrap.min.css" />
-    <link rel="stylesheet" href="{{ asset ('assets/css')}}/plugins.min.css" />
-    <link rel="stylesheet" href="{{ asset ('assets/css')}}/kaiadmin.min.css" />
+  <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}" />
+
+  <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous" />
+
+    
 
       
     <!-- CSS Just for demo purpose, don't include it in your project -->
@@ -53,7 +59,7 @@
         <div class="sidebar-logo">
           <!-- Logo Header -->
           <div class="logo-header" data-background-color="dark">
-          <a href="{{ route('home') }}" class="logo">
+          <a href=" " class="logo">
             <img src="{{ asset('assets/img/kaiadmin/logo_light.svg') }}" alt="navbar brand" class="navbar-brand" height="20" />
           </a>
             <div class="nav-toggle">
@@ -71,89 +77,57 @@
           <!-- End Logo Header -->
         </div>
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
-          <div class="sidebar-content">
-            <ul class="nav nav-secondary">
-              <li class="nav-item active">
-                <a
-                  data-bs-toggle="collapse"
-                  href="#dashboard"
-                  class="collapsed"
-                  aria-expanded="false"
-                >
-                  <i class="fas fa-home"></i>
-                  <p>Dashboard</p>
-                  <span class="caret"></span>
+        <div class="sidebar-content">
+          <ul class="nav nav-secondary">
+            {{-- Dashboard: arahnya beda sesuai role --}}
+            <li class="nav-item">
+              <a href="
+                {{ auth()->user()->role === 'admin'
+                    ? route('admin.dashboard')
+                    : route('cashier.dashboard') }}
+              ">
+                <i class="fas fa-home"></i>
+                <p>Dashboard</p>
+              </a>
+            </li>
+
+            {{-- Hanya untuk Admin --}}
+            @if(auth()->user()->role === 'admin')
+              <li class="nav-item">
+                <a href="{{ route('products.index') }}">
+                  <i class="fas fa-box"></i>
+                  <p>Product</p>
                 </a>
-                <div class="collapse" id="dashboard">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="../products">
-                        <span class="sub-item">PRODUCT</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="../categories">
-                        <span class="sub-item">KATEGORI</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="../home">
-                        <span class="sub-item">PRODUCT</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
-               
-                 
-                <div class="collapse" id="submenu">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav1">
-                        <span class="sub-item">Level 1</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav1">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav2">
-                        <span class="sub-item">Level 1</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav2">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <span class="sub-item">Level 1</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+              <li class="nav-item">
+                <a href="{{ route('categories.index') }}">
+                  <i class="fas fa-tags"></i>
+                  <p>Kategori</p>
+                </a>
               </li>
-            </ul>
-          </div>
+              <li class="nav-item">
+              <a href="{{ route('admin.users.index') }}">
+                <i class="fas fa-users"></i>
+                <p>User Management</p>
+              </a>
+            </li>
+
+            @endif
+
+            {{-- Hanya untuk Cashier --}}
+            @if(auth()->user()->role === 'cashier')
+              <li class="nav-item">
+                <a href="">
+                  <i class="fas fa-cash-register"></i>
+                  <p>Transaksi</p>
+                </a>
+              </li>
+            @endif
+          </ul>
         </div>
+      </div>
+
+
       </div>
       <!-- End Sidebar -->
 
@@ -317,7 +291,7 @@
                   >
                     <div class="avatar-sm">
                       <img
-                        src="assets/img/xyz.jpeg"
+                        src="{{ asset('assets/img/xyz.jpeg') }}"
                         alt="..."
                         class="avatar-img rounded-circle"
                       />

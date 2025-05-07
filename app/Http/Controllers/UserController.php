@@ -1,64 +1,73 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // INDEX: tampilkan daftar user
     public function index()
     {
-        //
+        $users = User::whereIn('role',['admin','cashier'])->get();
+        return view('admin.users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // STORE: simpan user baru (register cashier)
+    public function store(Request $r)
     {
-        //
+        $data = $r->validate([
+            'name'                  => 'required|string',
+            'email'                 => 'required|email|unique:users,email',
+            'password'              => 'required|confirmed|min:6',
+            'role'                  => 'required|in:cashier,admin',
+        ]);
+
+        User::create([
+            'name'     => $data['name'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role'     => $data['role'],
+        ]);
+
+        return redirect()->route('admin.users.index')
+                         ->with('success','User berhasil ditambahkan.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    // UPDATE: ubah nama, role, dan password (opsional)
+    public function update(Request $r, User $user)
+{
+    $data = $r->validate([
+        'name'                  => 'required|string|max:255',
+        'role'                  => 'required|in:admin,cashier',
+        'password'              => 'nullable|confirmed|min:6',
+    ]);
+
+    // Siapkan array perubahan
+    $changes = [
+      'name' => $data['name'],
+      'role' => $data['role'],
+    ];
+
+    if (! empty($data['password'])) {
+        $changes['password'] = Hash::make($data['password']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+    // Pakai mass‑update
+    $user->update($changes);
+
+    return redirect()
+           ->route('admin.users.index')
+           ->with('success','User berhasil diperbarui.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // DESTROY: hapus user
+    public function destroy(User $user)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $user->delete();
+        return redirect()->route('admin.users.index')
+                         ->with('success','User berhasil dihapus.');
     }
 }

@@ -75,7 +75,7 @@
 <!-- Modal Deskripsi Produk -->
 <div class="modal fade" id="descModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-md modal-dialog-centered">
-        <div class="modal-content rounded-4 shadow">
+        <div class="modal-content roundefd-4 shadow">
             <div class="modal-header border-0">
                 <h5 class="modal-title" id="descModalTitle">Deskripsi Produk</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage; // Tambahkan baris ini untuk mengimpor Storage
+use Illuminate\Support\Str; // pastikan ada ini di atas file
 
 class ProductController extends Controller
 {
@@ -41,13 +42,17 @@ class ProductController extends Controller
         // Validasi input dari pengguna
         $request->validate([
             'name' => 'required|string|max:255',
-            'barcode' => 'nullable|string|max:255|unique:products,barcode',
+            'barcode' => 'nullable',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'stock_quantity' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
         ]);
+
+        do {
+            $barcode = 'PRD-' . strtoupper(Str::random(8));
+        } while (Products::where('barcode', $barcode)->exists());
 
         // Menyimpan gambar jika ada
         $imagePath = null;
@@ -60,7 +65,7 @@ class ProductController extends Controller
         // Menyimpan data produk
         Products::create([
             'name' => $request->name,
-            'barcode' => $request->barcode,
+            'barcode' => $barcode,
             'category_id' => $request->category_id,
             'description' => $request->description,
             'price' => $request->price,

@@ -16,14 +16,17 @@ class LoginController extends Controller
 
     // Method untuk menangani login
     protected function authenticated(Request $request, $user)
-    {
-        // Cek role user dan arahkan ke halaman yang sesuai
-        if ($user->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        } else {
-            return redirect()->route('cashier.dashboard');
-        }
+{
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'cashier') {
+        return redirect()->route('cashier.dashboard');
     }
+
+    // Kalau rolenya aneh atau belum diatur, redirect ke home
+    return redirect('/home');
+}
+
 
     public function login(Request $request)
     {
@@ -33,13 +36,15 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return redirect()->intended('/');
+            $request->session()->regenerate(); // Ini standar Laravel, opsional tapi bagus
+            return $this->authenticated($request, Auth::user());
         }
 
         return redirect()->back()->withErrors([
             'email' => 'These credentials do not match our records.',
         ]);
     }
+
 
     public function showLoginForm()
     {

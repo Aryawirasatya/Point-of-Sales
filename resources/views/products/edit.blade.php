@@ -28,10 +28,10 @@
                 <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}" required>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label for="barcode" class="form-label">Barcode</label>
                 <input type="text" name="barcode" class="form-control" value="{{ old('barcode', $product->barcode) }}">
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <label for="description" class="form-label">Deskripsi</label>

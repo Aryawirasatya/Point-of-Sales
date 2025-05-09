@@ -62,8 +62,7 @@
               <form 
                 action="{{ route('categories.destroy', $cat->id) }}" 
                 method="POST" 
-                class="d-inline"
-                onsubmit="return confirm('Yakin hapus kategori ini?')"
+                class="d-inline form-delete-user"
               >
                 @csrf
                 @method('DELETE')
@@ -124,6 +123,31 @@ function showModal(e, btn) {
       body.innerHTML = '<div class="text-danger text-center">Gagal memuat data.</div>';
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // pilih semua form hapus
+  document.querySelectorAll('.form-delete-user').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // cegah submit langsung
+
+      Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // kalau user tekan Ya, submit form
+          form.submit();
+        }
+      });
+    });
+  });
+});
 </script>
 @endpush
 

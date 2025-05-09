@@ -13,8 +13,10 @@ class Sale extends Model
         return $this->hasMany(SaleItem::class);
     }
 
-    public function user()
+        public function user()
     {
+        // foreign key di tabel sales memang bernama user_id, 
+  
         return $this->belongsTo(User::class);
     }
 }

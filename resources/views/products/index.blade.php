@@ -43,7 +43,7 @@
                     <div class="card-footer bg-white border-top-0 d-flex justify-content-between px-3 pb-3">
                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="showModal(event, this)">Edit</a>
 
-                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Yakin hapus?')">
+                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="form-delete-user">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-outline-danger rounded-pill px-3">Hapus</button>
@@ -151,5 +151,30 @@ function showDescriptionModal(event, title, description) {
     document.getElementById('descModalBody').innerHTML = description || '<em class="text-muted">Tidak ada deskripsi.</em>';
     modal.show();
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // pilih semua form hapus
+  document.querySelectorAll('.form-delete-user').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // cegah submit langsung
+
+      Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // kalau user tekan Ya, submit form
+          form.submit();
+        }
+      });
+    });
+  });
+});
 </script>
 @endsection

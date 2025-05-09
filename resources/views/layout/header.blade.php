@@ -32,6 +32,7 @@
         },
       });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- CSS Files -->
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
@@ -110,18 +111,28 @@
                 <i class="fas fa-users"></i>
                 <p>User Management</p>
               </a>
+
             </li>
-
+            
+            
             @endif
-
+            
             {{-- Hanya untuk Cashier --}}
             @if(auth()->user()->role === 'cashier')
-              <li class="nav-item">
-                <a href="">
-                  <i class="fas fa-cash-register"></i>
-                  <p>Transaksi</p>
-                </a>
-              </li>
+            <li class="nav-item">
+              <a href="{{ route('cashier.transactions.create') }}">
+                <i class="fas fa-cash-register"></i>
+                <p>Transaksi</p>
+              </a>
+            </li>
+            <li class="nav-item">
+
+            <a href="{{ route('cashier.transactions.index') }}">
+              <i class="fas fa-file-invoice-dollar"></i>
+              <p>INVOICE</p>
+            </a>
+            </li>
+
             @endif
           </ul>
         </div>
@@ -161,18 +172,7 @@
               <nav
                 class="navbar navbar-header-left navbar-expand-lg navbar-form nav-search p-0 d-none d-lg-flex"
               >
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <button type="submit" class="btn btn-search pe-1">
-                      <i class="fa fa-search search-icon "></i>
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search ..."
-                    class="form-control"
-                  />
-                </div>
+
               </nav>
 
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
@@ -307,7 +307,7 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="assets/img/xyz.jpeg"
+                              src="{{ asset('assets/img/xyz.jpeg') }}"
                               alt="image profile"
                               class="avatar-img rounded"
                             />

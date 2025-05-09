@@ -40,8 +40,9 @@
           {{-- tombol hapus --}}
           <form action="{{ route('admin.users.destroy',$u) }}"
                 method="POST"
-                onsubmit="return confirm('Yakin ingin menghapus?')">
-            @csrf @method('DELETE')
+                class="form-delete-user">
+             @csrf
+             @method('DELETE')
             <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
           </form>
         </td>
@@ -72,12 +73,16 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <input type="password" name="password" class="form-control" id="reg-password" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" class="form-control" required>
+            <input type="password" name="password_confirmation" class="form-control" id="reg-password-confirmation" required>
+            <button type="button" class="btn btn-transparent" onclick="togglePassword('reg-password', 'reg-password-confirmation', 'reg-toggleIcon')" tabindex="-1">
+            <i class="fas fa-eye text-secondary" id="reg-toggleIcon"></i>
+            </button>
           </div>
+          
           <div class="mb-3">
             <label class="form-label">Role</label>
             <select name="role" class="form-select">
@@ -120,11 +125,15 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Password Baru (opsional)</label>
-            <input type="password" name="password" class="form-control">
+            <input type="password" name="password" class="form-control" id="edit-password">
           </div>
           <div class="mb-3">
             <label class="form-label">Konfirmasi Password</label>
-            <input type="password" name="password_confirmation" class="form-control">
+            <input type="password" name="password_confirmation" class="form-control" id="edit-password-confirmation">
+            <button type="button" class="btn btn-transparent" onclick="togglePassword('edit-password', 'edit-password-confirmation', 'edit-toggleIcon')" tabindex="-1">
+                <i class="fas fa-eye text-secondary" id="edit-toggleIcon"></i>
+            </button>
+            
           </div>
         </div>
         <div class="modal-footer">
@@ -138,6 +147,8 @@
 
 {{-- Script untuk isi form edit dan set action --}}
 @push('scripts')
+@endpush
+
 <script>
   document.addEventListener('DOMContentLoaded', function(){
     let editModal = document.getElementById('modal-edit-user');
@@ -153,7 +164,44 @@
               .action = `/admin/users/${id}`;
     });
   });
-</script>
-@endpush
 
+  function togglePassword(passwordId, confirmId, iconId) {
+    const passwordInput = document.getElementById(passwordId);
+    const confirmInput = document.getElementById(confirmId);
+    const toggleIcon = document.getElementById(iconId);
+
+    const isPassword = passwordInput.type === 'password';
+    passwordInput.type = isPassword ? 'text' : 'password';
+    confirmInput.type = isPassword ? 'text' : 'password';
+
+    toggleIcon.classList.toggle('fa-eye');
+    toggleIcon.classList.toggle('fa-eye-slash');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+  // pilih semua form hapus
+  document.querySelectorAll('.form-delete-user').forEach(form => {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // cegah submit langsung
+
+      Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // kalau user tekan Ya, submit form
+          form.submit();
+        }
+      });
+    });
+  });
+});
+
+</script>
 @endsection

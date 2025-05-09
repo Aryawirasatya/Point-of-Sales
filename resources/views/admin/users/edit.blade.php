@@ -40,6 +40,7 @@
     <div class="mb-3">
       <label class="form-label">Password Baru (opsional)</label>
       <input type="password" name="password" class="form-control">
+      
     </div>
 
     <div class="mb-3">
@@ -53,4 +54,5 @@
     <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Batal</a>
   </form>
 </div>
+
 @endsection

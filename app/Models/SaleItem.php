@@ -8,13 +8,15 @@ class SaleItem extends Model
 {
     protected $fillable = ['sale_id', 'product_id', 'quantity', 'unit_price', 'total_price'];
 
-    public function sale()
+        public function sale()
     {
+        // Ini relasi ke Sale, foreign key sale_id
         return $this->belongsTo(Sale::class);
     }
 
-    public function product()
+        public function product()
     {
-        return $this->belongsTo(Products::class);
+        // Ini relasi ke Product, foreign key product_id
+        return $this->belongsTo(Products::class, 'product_id');
     }
 }

@@ -1,4 +1,3 @@
-<html>
 <!-- Footer -->
     <footer class="footer">
       <div class="container-fluid d-flex justify-content-between">
@@ -57,8 +56,6 @@
     <!-- Kaiadmin JS -->
     <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
 
-    <!-- Place for page-specific scripts -->
-    @stack('scripts')
-
+ 
   </body>
 </html>

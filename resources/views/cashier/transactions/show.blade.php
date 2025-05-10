@@ -87,16 +87,25 @@
           </tr>
           @endforeach
         </tbody>
-        <tfoot>
-          <tr><th colspan="4">Total yang Harus Dibayar</th>
-              <th>Rp{{ number_format($sale->total_amount,0,',','.') }}</th></tr>
-          <tr><th colspan="4">Jumlah Uang yang Dibayarkan</th>
-              <th>Rp{{ number_format(session('paid'),0,',','.') }}</th></tr>
-          <tr><th colspan="4">Kembalian</th>
-              <th>Rp{{ number_format(session('change'),0,',','.') }}</th></tr>
-          <tr><th colspan="4">Status Pembayaran</th>
-              <th>{{ ucfirst($sale->payment_status) }}</th></tr>
-        </tfoot>
+      <tfoot>
+      <tr>
+        <th colspan="4">Total</th>
+        <th>Rp{{ number_format($sale->total_amount,0,',','.') }}</th>
+      </tr>
+      <tr>
+        <th colspan="4">Bayar</th>
+        <th>Rp{{ number_format($sale->paid_amount,0,',','.') }}</th>
+      </tr>
+      <tr>
+        <th colspan="4">Kembalian</th>
+        <th>Rp{{ number_format($sale->change_amount,0,',','.') }}</th>
+      </tr>
+      <tr>
+        <th colspan="4">Status</th>
+        <th>{{ ucfirst($sale->payment_status) }}</th>
+      </tr>
+      </tfoot>
+
       </table>
     </div>
   </div>

@@ -29,6 +29,8 @@ class TransactionController extends Controller
     $items = json_decode($data['items'], true);
 
     $total = collect($items)->sum(fn($i) => $i['price'] * $i['qty']);
+    $paid = $data['paid'];
+    $change = $paid - $total;
 
     if ($data['paid'] < $total) {
         return back()->withErrors('Jumlah bayar tidak boleh kurang dari total.');
@@ -46,10 +48,12 @@ class TransactionController extends Controller
 
     // Jalankan transaksi hanya jika validasi lolos
     try {
-        $sale = DB::transaction(function () use ($items, $total) {
+        $sale = DB::transaction(function () use ($items, $total,$change,$paid) {
             $sale = Sale::create([
                 'invoice_number' => 'INV'.now()->format('YmdHis'),
                 'total_amount'   => $total,
+                'paid_amount'    => $paid,    // simpan bayar
+                'change_amount'  => $change, 
                 'payment_status' => 'paid',
                 'user_id'        => Auth::id(),
             ]);
@@ -96,15 +100,13 @@ class TransactionController extends Controller
     return view('cashier.transactions.show', compact('sale'));
 }
 
-    /** Tampilkan riwayat transaksi (history) */
     public function index(Request $request)
     {
         // Ambil query pencarian jika ada
         $search = $request->query('q');
     
         // Mulai query dasar: hanya transaksi milik kasir ini
-        $query = Sale::with('user')
-                     ->where('user_id', Auth::id());
+        $query = Sale::with('user');
     
         // Jika ada pencarian invoice, filter berdasarkan itu
         if ($search) {

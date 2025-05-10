@@ -1,4 +1,4 @@
-@extends(request()->ajax() ? 'layout.blank' : 'layout.app')
+<!-- @extends(request()->ajax() ? 'layout.blank' : 'layout.app')
 
 
 @section('content')
@@ -26,4 +26,4 @@
         <a href="{{ route('categories.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
 </div>
-@endsection
+@endsection -->

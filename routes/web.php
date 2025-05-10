@@ -1,6 +1,6 @@
      <?php
 
-     use App\Http\Controllers\Admin\UserController as AdminUserController;
+     // use App\Http\Controllers\UserController as AdminUserController;
      use Illuminate\Support\Facades\Route;
      use App\Http\Controllers\AdminController;
      use App\Http\Controllers\CashierController;
@@ -45,8 +45,10 @@
           Route::get('register-cashier', [AdminController::class, 'showRegisterForm'])
                ->name('register.cashier');
           Route::post('register-cashier', [AdminController::class, 'registerCashier']);
+          // BENAR
           Route::resource('users', UserController::class)
-          ->except(['show','create']); 
+               ->except(['show','create']);
+
 
           // Reset Password Kasir
           //  Route::get('reset-password/{user}', [AdminController::class, 'showResetPasswordForm'])

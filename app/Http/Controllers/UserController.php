@@ -70,4 +70,10 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
                          ->with('success','User berhasil dihapus.');
     }
+    // EDIT: tampilkan form edit user
+    public function edit(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
 }

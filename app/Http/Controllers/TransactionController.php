@@ -106,7 +106,7 @@ class TransactionController extends Controller
         $search = $request->query('q');
     
         // Mulai query dasar: hanya transaksi milik kasir ini
-        $query = Sale::with('user');
+        $query = Sale::with('user')->where('user_id', Auth::id());
     
         // Jika ada pencarian invoice, filter berdasarkan itu
         if ($search) {

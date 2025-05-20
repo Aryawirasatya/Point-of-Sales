@@ -1,105 +1,115 @@
-     <?php
+<?php
 
-     // use App\Http\Controllers\UserController as AdminUserController;
-     use Illuminate\Support\Facades\Route;
-     use App\Http\Controllers\AdminController;
-     use App\Http\Controllers\CashierController;
-     use App\Http\Controllers\CategoryController;
-     use App\Http\Controllers\ProductController;
-     use App\Http\Controllers\Auth\LoginController;
-     use App\Http\Controllers\HomeController;
-     use App\Http\Controllers\UserController;
-     use App\Http\Controllers\TransactionController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CashierController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ReportController;
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-     /*
-     |--------------------------------------------------------------------------
-     | Public Routes
-     |--------------------------------------------------------------------------
-     */
-     Route::get('/', [HomeController::class, 'index'])->name('home');
+// Product & Category Management
+Route::resource('products', ProductController::class);
+Route::resource('categories', CategoryController::class);
 
-     /*
-     |--------------------------------------------------------------------------
-     | Auth Routes
-     |--------------------------------------------------------------------------
-     */
-     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-     Route::post('/login', [LoginController::class, 'login']);
-     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+/*
+|--------------------------------------------------------------------------
+| Admin Routes (role = admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'checkrole:admin'])
+     ->prefix('admin')
+     ->name('admin.')
+     ->group(function () {
 
-     /*
-     |--------------------------------------------------------------------------
-     | Admin Routes (hanya untuk role = admin)
-     |--------------------------------------------------------------------------
-     */
-     Route::middleware(['auth', 'checkrole:admin'])
-          ->prefix('admin')
-          ->name('admin.')
-          ->group(function() {
-          // Dashboard admin
-          Route::get('dashboard', [AdminController::class, 'index'])->name('dashboard');
+    // Dashboard
+    Route::get('dashboard', [AdminController::class, 'index'])
+         ->name('dashboard');
 
-          // Register Kasir
-          Route::get('register-cashier', [AdminController::class, 'showRegisterForm'])
-               ->name('register.cashier');
-          Route::post('register-cashier', [AdminController::class, 'registerCashier']);
-          // BENAR
-          Route::resource('users', UserController::class)
-               ->except(['show','create']);
+    // Register Kasir
+    Route::get('register-cashier', [AdminController::class, 'showRegisterForm'])
+         ->name('register.cashier');
+    Route::post('register-cashier', [AdminController::class, 'registerCashier']);
 
+    // User Management
+    Route::resource('users', UserController::class)
+         ->except(['show','create']);
 
-          // Reset Password Kasir
-          //  Route::get('reset-password/{user}', [AdminController::class, 'showResetPasswordForm'])
-          //       ->name('reset.password');
-          //  Route::post('reset-password/{user}', [AdminController::class, 'resetPassword']);
-     });
+    /*
+    |--------------------------------------------------------------------------
+    | Report Routes
+    |--------------------------------------------------------------------------
+    */
 
-     /*
-     |--------------------------------------------------------------------------
-     | Cashier Routes (hanya untuk role = cashier)
-     |--------------------------------------------------------------------------
-     */
-     Route::middleware(['auth', 'checkrole:cashier'])
-          ->prefix('cashier')
-          ->name('cashier.')
-          ->group(function() {
-          Route::get('dashboard', [CashierController::class, 'dashboard'])
-               ->name('dashboard');
-     });
+    // Landing page for all reports
+    Route::get('reports', [ReportController::class, 'index'])
+         ->name('reports.index');
 
-     /*
-     |--------------------------------------------------------------------------
-     | Resource Routes (hanya untuk admin)
-     |--------------------------------------------------------------------------
-     */
-     Route::middleware(['auth', 'checkrole:admin'])
-          ->group(function() {
-          Route::resource('products', ProductController::class);
-          Route::resource('categories', CategoryController::class);
-     });
+    // HTML views
+    Route::get('reports/products',      [ReportController::class, 'productReport'])
+         ->name('reports.products');
+    Route::get('reports/sales',         [ReportController::class, 'salesReport'])
+         ->name('reports.sales');
+    Route::get('reports/stock-changes', [ReportController::class, 'stockChanges'])
+         ->name('reports.stock_changes');
 
-     Route::middleware(['auth','checkrole:cashier'])
-          ->prefix('cashier')
-          ->name('cashier.')
-          ->group(function() {
-          // Form Buat Transaksi
-          Route::get('transactions/create', [TransactionController::class,'create'])
-               ->name('transactions.create');
+    // Excel exports
+    Route::get('reports/products/excel',      [ReportController::class, 'productsExcel'])
+         ->name('reports.products.excel');
+    Route::get('reports/sales/excel',         [ReportController::class, 'salesExcel'])
+         ->name('reports.sales.excel');
+    Route::get('reports/stock-changes/excel', [ReportController::class, 'stockChangesExcel'])
+         ->name('reports.stock_changes.excel');
 
-          // Simpan Transaksi
-          Route::post('transactions', [TransactionController::class,'store'])
-               ->name('transactions.store');
+    // PDF exports (optional)
+    Route::get('reports/products/pdf',      [ReportController::class, 'productsPdf'])
+         ->name('reports.products.pdf');
+    Route::get('reports/sales/pdf',         [ReportController::class, 'salesPdf'])
+         ->name('reports.sales.pdf');
+    Route::get('reports/stock-changes/pdf', [ReportController::class, 'stockChangesPdf'])
+         ->name('reports.stock_changes.pdf');
+});
 
-               Route::get('transactions', [TransactionController::class, 'index'])
-               ->name('transactions.index');
+/*
+|--------------------------------------------------------------------------
+| Cashier Routes (role = cashier)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'checkrole:cashier'])
+     ->prefix('cashier')
+     ->name('cashier.')
+     ->group(function () {
 
-         // web.php, di dalam group cashier…
-          Route::get('transactions/{sale}/invoice', [TransactionController::class,'invoice'])
-          ->name('transactions.show');   // => cashier.transactions.show
+    // Dashboard
+    Route::get('dashboard', [CashierController::class, 'dashboard'])
+         ->name('dashboard');
 
-                    
-     });
-
-     
+    // Transactions
+    Route::get('transactions',                    [TransactionController::class, 'index'])
+         ->name('transactions.index');
+    Route::get('transactions/create',             [TransactionController::class, 'create'])
+         ->name('transactions.create');
+    Route::post('transactions',                   [TransactionController::class, 'store'])
+         ->name('transactions.store');
+    Route::get('transactions/{sale}/invoice',     [TransactionController::class, 'invoice'])
+         ->name('transactions.show');
+});

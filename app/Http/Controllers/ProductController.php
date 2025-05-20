@@ -134,7 +134,7 @@ class ProductController extends Controller
         // Update data produk
         $product->update([
             'name' => $request->name,
-            'barcode' => $request->barcode,
+            'barcode' => $request->barcode ?? $product->barcode,
             'category_id' => $request->category_id,
             'description' => $request->description,
             'price' => $request->price,

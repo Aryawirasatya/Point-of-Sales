@@ -10,7 +10,7 @@ class UserController extends Controller
     // INDEX: tampilkan daftar user
     public function index()
     {
-        $users = User::whereIn('role',['admin','cashier'])->get();
+        $users = User::whereIn('role',['admin','cashier'])->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 

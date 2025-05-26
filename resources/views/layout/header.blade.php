@@ -32,6 +32,44 @@
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}" />
+  <style>
+  /* 1) Ubah warna dasar halaman (body) */
+  body {
+    background-color:rgba(49, 54, 63, 0.26) !important; /* ganti dengan hex pilihanmu */
+  }
+
+  /* 2) Jika konten dibungkus oleh wrapper/main-panel, override juga */
+  .main-panel, nav {
+    background-color: #222831 !important;
+  }
+  .wrapper {
+    background-color: #222831 !important;
+  }
+
+  /* 3) Jika container-card atau elemen lain yang masih putih, override lebih spesifik */
+  .card, .container {
+  }
+
+  .sidebar{
+    background-color:rgb(23, 28, 33) !important;
+
+  }
+  .navbar{
+           background-color:rgb(23, 28, 33) !important;
+ /* ganti dengan hex pilihanmu */
+
+  }
+
+  .container {
+    background-color: #222831 !important;
+  }
+  .footer{
+    background-color: #222831 !important;
+
+  }
+ 
+</style>
+
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     crossorigin="anonymous" />
@@ -45,21 +83,23 @@
 
   <!-- Bootstrap JS (for dismissing alert) -->
 
+
+
 </head>
 
 <body>
   <div class="wrapper">
     <!-- Sidebar -->
-    <div class="sidebar" data-background-color="dark">
+    <div class="sidebar" data-background-color="#222831">
       <div class="sidebar-logo">
         <!-- Logo Header -->
-        <div class="logo-header" data-background-color="dark">
-          <a href=" " class="logo px-4 ">
+        <div class="logo-header" data-background-color="222831">
+          <a href=" " class="logo px-5 ">
             <img src="{{ asset('assets/img/warcok1.png') }}" alt="navbar brand" class="navbar-brand "
-              height="77%"   />
+              height="50px"   />
           </a>
           <div class="nav-toggle">
-            <button class="btn btn-toggle toggle-sidebar">
+            <button class="btn btn-toggle toggle-sidebar" >
               <i class="gg-menu-right"></i>
             </button>
             <button class="btn btn-toggle sidenav-toggler">
@@ -109,7 +149,7 @@
           </li>
           <li class="nav-item">
             <a href="{{ route('admin.reports.index') }}">
-            <i class="fas fa-chart-line"></i>
+            <i class="fas fa-file-excel"></i>
             <p>laporan</p>
             </a>
           </li>
@@ -151,7 +191,7 @@
             </a>
 
             <div class="nav-toggle">
-              <button class="btn btn-toggle toggle-sidebar">
+              <button class="btn btn-toggle toggle-sidebar ">
                 <i class="gg-menu-right"></i>
               </button>
               <button class="btn btn-toggle sidenav-toggler">
@@ -188,7 +228,7 @@
               </li>
 
 
-              <li class="nav-item topbar-icon dropdown hidden-caret">
+              {{-- <li class="nav-item topbar-icon dropdown hidden-caret">
                 <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                   <i class="fas fa-layer-group"></i>
                 </a>
@@ -252,46 +292,36 @@
                     </div>
                   </div>
                 </div>
-              </li>
-
+              </li> --}}
               <li class="nav-item topbar-user dropdown hidden-caret">
                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                  <div class="avatar-sm">
-                    <img src="{{ asset('assets/img/xyz.jpeg') }}" alt="..." class="avatar-img rounded-circle" />
-                  </div>
+ 
                   <span class="profile-username">
-                    <span class="op-7">Hi,</span>
-                    <span class="fw-bold">tedsky</span>
+                    <span class="op-7" style="color:white">Hi,</span>
+                    <span class="fw-bold" style="color:white">  {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})</span>
                   </span>
                 </a>
                 <ul class="dropdown-menu dropdown-user animated fadeIn">
                   <div class="dropdown-user-scroll scrollbar-outer">
                     <li>
                       <div class="user-box">
-                        <div class="avatar-lg">
-                          <img src="{{ asset('assets/img/xyz.jpeg') }}" alt="image profile"
-                            class="avatar-img rounded" />
-                        </div>
+ 
                         <div class="u-text">
-                          <h4>Hizrian</h4>
-                          <p class="text-muted">hello@example.com</p>
-                          <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                          <h4>{{ auth()->user()->name }}</h4>
+                          <p class="text-muted">{{ auth()->user()->email }}</p>
                         </div>
                       </div>
                     </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">My Profile</a>
-                      <a class="dropdown-item" href="#">My Balance</a>
-                      <a class="dropdown-item" href="#">Inbox</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">Account Setting</a>
-                      <div class="dropdown-divider"></div>
-                      <!-- Dropdown item -->
-                      <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                        Logout
-                      </a>
-                    </li>
+                   <li>
+                    <button 
+                      type="button" 
+                      class="dropdown-item text-danger d-flex align-items-center gap-2" 
+                      data-bs-toggle="modal" 
+                      data-bs-target="#logoutModal"
+                    >
+                      <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                  </li>
                   </div>
                 </ul>
               </li>

@@ -1,17 +1,58 @@
 @extends('layout.app')
 
 @section('content')
-<div class="container mt-5">
+<style>
+    .card-header,
+    .card-body {
+        background-color: #3a3d42 !important;
+    }
 
+    .card-body {
+        border-radius: 1rem;
+        height: 100%;
+    }
+
+    .card {
+        border-radius: 50%;
+        background-color: #3a3d42 !important;
+    }
+
+    .table-wrapper {
+        overflow: hidden !important;
+    }
+
+    form .col-auto .form-label {
+        color: white !important;
+    }
+
+    .table th,
+    .table td {
+        background-color: #3a3d42 !important;
+        color: white !important;
+
+    }
+ 
+    .btn-excel {
+        background-color: rgb(71, 79, 93);
+        color: white;
+        border-radius: 1rem;
+    }
+    .btn-pdf {
+        background-color: rgb(99, 129, 181);
+        color: white;
+        border-radius: 1rem;
+    }
+</style>
+
+<div class="container mt-5">
     <div class="card shadow rounded-4">
         <div class="card-header bg-primary text-white rounded-top-4">
             <h4 class="mb-0"><i class="fas fa-receipt me-2"></i>Laporan Transaksi Penjualan</h4>
         </div>
 
         <div class="card-body">
-
             {{-- Filter Tanggal --}}
-            <form method="GET" class="row gy-2 gx-3 align-items-center mb-4">
+            <form method="GET" class="row g-3 align-items-end mb-4">
                 <div class="col-auto">
                     <label class="form-label">Dari:</label>
                     <input type="date" name="start_date" value="{{ $start }}" class="form-control form-control-sm">
@@ -31,11 +72,11 @@
             <div class="d-flex justify-content-between mb-3">
                 <div>
                     <a href="{{ route('admin.reports.sales.excel', request()->all()) }}"
-                       class="btn btn-success btn-sm">
+                       class="btn-sm m-1 btn-excel">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </a>
                     <a href="{{ route('admin.reports.sales.pdf') }}"
-                       class="btn btn-danger btn-sm">
+                       class="btn-sm m-1 btn-pdf">
                         <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
                 </div>
@@ -45,7 +86,7 @@
             </div>
 
             {{-- Tabel Data --}}
-            <div class="table-responsive">
+            <div class="table-responsive table-wrapper">
                 <table class="table table-bordered table-striped align-middle">
                     <thead class="table-light">
                         <tr>
@@ -81,9 +122,7 @@
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
-
 </div>
 @endsection

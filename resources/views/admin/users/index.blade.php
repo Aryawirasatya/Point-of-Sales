@@ -1,6 +1,121 @@
 @extends('layout.app')
 @section('content')
+ <style>
+  /* === Judul Halaman === */
+  h2 {
+    font-weight: 400;
+    color: white;
+  }
+
+  /* === Tombol Register Kasir === */
+  .btn-register-kasir {
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 6px;
+  }
+
+  /* === Alert Sukses === */
+  .alert-success {
+    font-size: 14px;
+    padding: 10px 15px;
+    border-radius: 4px;
+  }
+
+  /* === Tabel Daftar User === */
+  .table-user {
+    border: 1px solid #ddd;
+    font-size: 14px;
+    border-radius:10px;
+    overflow:hidden;
+    /* background-color: #f8f9fa; */
+  }
+  
+  .table-user thead {
+  }
+  
+  
+  .table-user td,
+  .table-user th {
+    /* border-radius:5px ; */
+    border:none;
+    padding: 10px;
+    vertical-align: middle;
+    color:white;
+  background-color: #31363F;
+
+  }
+.table-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+  .table-user tbody tr:nth-child(odd){
+    background-color: #3a3d42;
+  }
+
+  .table-user tbody tr:nth-child(even){
+    background-color: #46494f;
+  }
+
+  .table-user tbody tr:hover {
+  background-color: #5c5f66;
+  transition: background-color 0.3s ease;
+}
+  /* === Tombol Edit & Hapus === */
+  .btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  .btn-action i {
+    margin-right: 2px;
+  }
+
+  /* === Modal Form === */
+  .modal .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .modal .form-label {
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .modal .form-control,
+  .modal .form-select {
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  /* === Modal Footer Buttons === */
+  .modal-footer .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  /* === Tombol Tampilkan Password === */
+  .btn-transparent {
+    background: transparent;
+    border: none;
+    padding-left: 0;
+    margin-top: 4px;
+  }
+
+  /* === Responsive Container === */
+  .container.py-4 {
+    max-width: 800px;
+  }
+</style>
+
 <div class="container py-4">
+  
   <h2>Manajemen Pengguna</h2>
 
   {{-- tombol buka modal register --}}
@@ -12,39 +127,50 @@
 
   {{-- pesan sukses --}}
   @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-  @endif
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      Produk berhasil ditambahkan.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 
-  {{-- tabel daftar user --}}
-  <table class="table table-bordered">
-    <thead class="table-light">
-      <tr><th class="">NO</th><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr>
-    </thead>
-    <tbody>
-      @foreach($users as $u)
-      <tr>
-        <td>{{ $u->id }}</td>
-        <td>{{ $u->name }}</td>
-        <td>{{ $u->email }}</td>
-        <td>{{ ucfirst($u->role) }}</td>
-        <td class="d-flex gap-1">
-          {{-- tombol edit buka modal --}}
-          <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm btn-warning">
-            <i class="fas fa-edit"></i>
-          </a>
-                    {{-- tombol hapus --}}
-          <form action="{{ route('admin.users.destroy',$u) }}"
-                method="POST"
-                class="form-delete-user">
-             @csrf
-             @method('DELETE')
-            <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-          </form>
-        </td>
-      </tr>
-      @endforeach
-    </tbody>
-  </table>
+
+  @endif
+  <div class="table-responsive">
+    <table class="table table-hover table-user">
+      <thead>
+        <tr><th class="">NO</th><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr>
+      </thead>
+      <tbody>
+        @foreach($users as $u)
+        <tr>
+          <td>{{ $u->id }}</td>
+          <td>{{ $u->name }}</td>
+          <td>{{ $u->email }}</td>
+          <td>{{ ucfirst($u->role) }}</td>
+            {{-- tombol edit buka modal --}}
+          <td class="d-flex gap-2">
+            <a href="{{ route('admin.users.edit', $u) }}" class="btn btn-sm btn-outline-warning rounded-pill px-3 me-2">
+              <i class="fas fa-edit"></i>
+            </a>
+                      {{-- tombol hapus --}}
+            <form action="{{ route('admin.users.destroy',$u) }}"
+                  method="POST"
+                  class="form-delete-user  ">
+               @csrf
+               @method('DELETE')
+              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="fas fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+     <div class=" border-0 mt-2 gap-5">
+        <nav class="d-flex justify-content-end mb-0 gap" aria-label="Pagination">
+            {{ $users->links('pagination::bootstrap-5') }}
+        </nav>
+    </div>
+  </div>
+ 
 </div>
 
 {{-- Modal: Register Kasir --}}

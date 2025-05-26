@@ -1,8 +1,8 @@
-<!-- @extends(request()->ajax() ? 'layout.blank' : 'layout.app')
+ @extends(request()->ajax() ? 'layout.blank' : 'layout.app')
 
 
 @section('content')
-<div class="container">
+<div>
     <h2>Edit Kategori</h2>
 
     <form action="{{ route('categories.update', $category->id) }}" method="POST">
@@ -26,4 +26,4 @@
         <a href="{{ route('categories.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
 </div>
-@endsection -->
+@endsection 

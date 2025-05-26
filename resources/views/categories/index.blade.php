@@ -2,13 +2,54 @@
 @extends('layout.app')
 
 @section('content')
+<style>
+  .container h2{
+    color:white;
+    padding-bottom:10px;
+  }
+
+    .table-user {
+    border:none;
+    font-size: 14px;
+    border-radius:10px;
+    overflow:hidden;
+    /* background-color: #f8f9fa; */
+  }
+  
+  .table-user thead {
+    border:none;
+  }
+  
+  
+ .table-user td,
+.table-user th {
+  color: #f1f1f1;
+  background-color: #2e323a;
+  border:none;
+
+}
+#categoryModal .modal-content{
+  background-color:#2e323a;
+  color:#f1f1f1;
+  border-radius:1rem;
+  border:none;
+}
+#categoryModal .form-label,
+#categoryModal label
+{
+    color: #f1f1f1 !important;
+
+
+}
+ 
+</style>
 <div class="container py-5">
+  <h2 class="fw-bold mb-0">
+    <i class="bi bi-tags-fill text-primary me-2"></i>
+    Kategori
+  </h2>
   {{-- Header dengan tombol Tambah --}}
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0">
-      <i class="bi bi-tags-fill text-primary me-2"></i>
-      Kategori
-    </h2>
     <button 
       class="btn btn-primary rounded-pill px-4 py-2 shadow-sm"
       onclick="showModal(event, this)" 
@@ -27,10 +68,10 @@
   @endif
 
   {{-- Tabel dalam Card --}}
-  <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+  <div class="shadow-sm border-0 rounded-4 overflow-hidden">
     <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="bg-light">
+      <table class="table table-hover align-middle mb-0 table-user">
+        <thead >
           <tr>
             <th class="py-3 ps-4">No</th>
             <th class="py-3">Nama Kategori</th>
@@ -78,11 +119,11 @@
     </div>
 
     {{-- Pagination --}}
-    <div class="card-footer bg-white border-0">
-        <nav class="d-flex justify-content-end mb-0 gap-20" aria-label="Pagination">
+    <div class=" border-0 mt-2 gap-5">
+        <nav class="d-flex justify-content-end mb-0 gap" aria-label="Pagination">
             {{ $categories->links('pagination::bootstrap-5') }}
         </nav>
-</div>
+    </div>
 
   </div>
 </div>
@@ -151,13 +192,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-{{-- Optional CSS overrides --}}
-<style>
-.table-hover tbody tr:hover {
-  background-color: #f8f9fa;
-}
-.pagination {
-  margin: 0;
-  gap: .30rem;
-}
-</style>
+ 

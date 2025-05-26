@@ -38,6 +38,62 @@ class CategorySeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Elektronik',
+                'description' => 'Lampu, kabel, charger, dan perangkat listrik kecil',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Kecantikan',
+                'description' => 'Kosmetik, sabun wajah, dan skincare',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Perawatan Pribadi',
+                'description' => 'Sampo, sabun mandi, deodorant, pasta gigi',
+                'status' => 'inactive',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Bumbu Dapur',
+                'description' => 'Garam, gula, penyedap rasa, kecap, dan lainnya',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Makanan Instan',
+                'description' => 'Mi instan, sarden, kornet, dan makanan cepat saji',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Cemilan Anak',
+                'description' => 'Permen, cokelat, biskuit, dan snack anak-anak',
+                'status' => 'inactive',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Kesehatan',
+                'description' => 'Masker, vitamin, tisu basah, alkohol',
+                'status' => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Pakaian Dalam',
+                'description' => 'Kaos dalam, celana dalam, dan pakaian rumah',
+                'status' => 'inactive',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

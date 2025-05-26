@@ -1,6 +1,48 @@
 @extends('layout.app')
 
 @section('content')
+<style>
+    .card-header,
+    .card-body {
+        background-color: #3a3d42 !important;
+    }
+
+    .card-body {
+        border-radius: 1rem;
+        height: 100%;
+    }
+
+    .card {
+        border-radius: 12%;
+        background-color: #3a3d42 !important;
+    }
+
+    .table-wrapper {
+        overflow: hidden !important;
+    }
+
+    form .col-auto .form-label {
+        color: white !important;
+    }
+
+    .table th,
+    .table td {
+        background-color: #3a3d42 !important;
+        color: white !important;
+    }
+
+    .btn-excel {
+        background-color: rgb(71, 79, 93);
+        color: white;
+        border-radius: 1rem;
+    }
+    .btn-pdf {
+        background-color: rgb(99, 129, 181);
+        color: white;
+        border-radius: 1rem;
+    }
+</style>
+
 <div class="container mt-5">
 
     <div class="card shadow rounded-4">
@@ -8,17 +50,17 @@
             <h4 class="mb-0"><i class="fas fa-boxes-stacked me-2"></i>Laporan Produk</h4>
         </div>
 
-        <div class="card-body">
+        <div class="card-body ">
 
-            {{-- Aksi Ekspor dan Print --}}
+            {{-- Aksi Ekspor & Print --}}
             <div class="d-flex justify-content-between mb-3">
                 <div>
                     <a href="{{ route('admin.reports.products.excel', request()->all()) }}"
-                       class="btn btn-success btn-sm">
+                       class="btn-sm m-1 btn-excel">
                         <i class="fas fa-file-excel"></i> Export Excel
                     </a>
-                    <a href="{{ route(Route::currentRouteName().'.pdf', request()->all()) }}"
-                       class="btn btn-danger btn-sm">
+                    <a href="{{ route('admin.reports.products.pdf', request()->all()) }}"
+                       class="btn-sm m-1 btn-pdf">
                         <i class="fas fa-file-pdf"></i> Export PDF
                     </a>
                 </div>
@@ -28,7 +70,7 @@
             </div>
 
             {{-- Tabel Data Produk --}}
-            <div class="table-responsive">
+            <div class="table-responsive table-wrapper">
                 <table class="table table-bordered table-striped align-middle">
                     <thead class="table-light">
                         <tr>

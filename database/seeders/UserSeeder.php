@@ -10,25 +10,34 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('users')->insert([
-            [
-                'name' => 'Admin Toko',
-                'email' => 'admin@toko.com',
+        $users = [];
+
+        // Tambahkan 5 admin
+        for ($i = 1; $i <= 5; $i++) {
+            $users[] = [
+                'name' => "Admin Toko $i",
+                'email' => "admin$i@toko.com",
                 'password' => Hash::make('password123'),
                 'role' => 'admin',
                 'remember_token' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'name' => 'Kasir Toko',
-                'email' => 'kasir@toko.com',
+            ];
+        }
+
+        // Tambahkan 45 kasir
+        for ($i = 1; $i <= 45; $i++) {
+            $users[] = [
+                'name' => "Kasir Toko $i",
+                'email' => "kasir$i@toko.com",
                 'password' => Hash::make('password123'),
                 'role' => 'cashier',
                 'remember_token' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-        ]);
+            ];
+        }
+
+        DB::table('users')->insert($users);
     }
 }

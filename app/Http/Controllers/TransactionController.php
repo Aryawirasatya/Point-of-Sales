@@ -20,13 +20,18 @@ class TransactionController extends Controller
 
     /** Proses simpan transaksi */
     public function store(Request $request)
-{
-    $data = $request->validate([
+    {
+        $data = $request->validate([
         'items' => 'required|json',
         'paid'  => 'required|numeric|min:0',
     ]);
 
     $items = json_decode($data['items'], true);
+
+    if (empty($items)) {
+        return back()->withErrors('Keranjang tidak boleh kosong.');
+    }
+    
 
     $total = collect($items)->sum(fn($i) => $i['price'] * $i['qty']);
     $paid = $data['paid'];
@@ -38,12 +43,15 @@ class TransactionController extends Controller
 
     // Validasi stok terlebih dahulu
     foreach ($items as $i) {
-        $product = Products::find($i['id']);
-        if (!$product || $product->stock_quantity < $i['qty']) {
-            $productName = $product ? $product->name : 'Produk tidak ditemukan';
-            return back()->withErrors("Stok untuk {$productName} tidak mencukupi.");
-        }
+    $product = Products::find($i['id']);
+    if (!$product) {
+        return back()->withErrors("Produk dengan ID {$i['id']} tidak ditemukan.");
     }
+    if ($product->stock_quantity < $i['qty']) {
+        return back()->withErrors("Stok tidak mencukupi untuk produk {$product->name}.");
+    }
+}
+
     
 
     // Jalankan transaksi hanya jika validasi lolos

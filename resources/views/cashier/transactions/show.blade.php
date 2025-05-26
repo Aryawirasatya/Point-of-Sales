@@ -1,7 +1,17 @@
 @extends('layout.app')
 @push('styles')
 <!-- CSS lain… -->
-
+<style>
+  #invoice h2 {
+    color: #EEEEEE; /* atau warna yang kamu mau */
+  }
+  
+  #invoice p {
+    color: #EEEEEE;
+  }
+  
+ 
+</style>
 <style media="print">
   /* 1) Sembunyikan elemen layout di luar invoice */
   @page {
@@ -66,7 +76,12 @@
     h5 {
       font-size: 14px !important;
     }
+    .line{
+      border:2px dashed black;
+      margin:1px;
+    }
   }
+
 </style>
 
 
@@ -83,9 +98,10 @@
 @endif
   <div id="invoice" class="p-4 border" style="max-width:800px; margin:auto;">
     <div class="mb-4 text-center">
-      <h2 class="fw-bold mb-1">Toko Kelontong XYZ</h2>
-      <p class="mb-0">Jl. Merdeka No.123, Jakarta</p>
+      <h2 class="fw-bold mb-1">WARCOK: WARUNG BANG UCOK</h2>
+    <p class="mb-0">  <span style="color:white;">Jl. PANGERAN HIDAYATULLAH, Cianjur</span></p>
     </div>
+      <div class="line"></div>
     <div class="card shadow-sm">
       <div class="card-header bg-white border-bottom-0 d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Invoice <span class="text-primary">{{ $sale->invoice_number }}</span></h5>
@@ -93,7 +109,10 @@
           Kasir : {{ $sale->user->name }} • {{ $sale->created_at->timezone('Asia/Jakarta')->format('d/m/Y H:i:s') }}
         </small>
       </div>
+ 
+
       <div class="card-body">
+         <div class="line"></div> 
         <div class="table-responsive">
           <table class="table table-sm table-striped mb-0">
             <thead class="table-light">
@@ -121,22 +140,31 @@
                 <th colspan="4" class="text-start">Total   :</th>
                 <th class="text-end">Rp{{ number_format($sale->total_amount,0,',','.') }}</th>
               </tr>
+ 
+
               <tr>
                 <th colspan="4" class="text-start">Bayar      :</th>
                 <th class="text-end">Rp{{ number_format($sale->paid_amount,0,',','.') }}</th>
               </tr>
+  
+              
               <tr>
                 <th colspan="4" class="text-start">Kembalian     :</th>
                 <th class="text-end">Rp{{ number_format($sale->change_amount,0,',','.') }}</th>
               </tr>
+   
+
               <tr>
                 <th colspan="4" class="text-start">Status     :</th>
                 <th class="text-end">{{ ucfirst($sale->payment_status) }}</th>
               </tr>
             </tfoot>
           </table>
+          <p class="text-center"><spans style="color:black;">TERIMAKASIH🏪</span></p>
         </div>
+        <div class="line"></div> 
       </div>
+
     </div>
   </div>
 <div class="mb-3 mt-3 text-center no-print">

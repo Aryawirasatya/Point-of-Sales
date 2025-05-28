@@ -2,46 +2,48 @@
 
 @section('content')
 <div class="container-fluid py-4">
-
   <div class="row g-4">
 
     {{-- Ringkasan Metric --}}
     <div class="col-md-6">
-      <div class="card bg-gradient-success text-white shadow rounded-4 h-100">
-        <div class="card-body d-flex flex-column justify-content-center text-center py-5">
-          <i class="fas fa-shopping-cart fa-2x mb-2"></i>
-          <h5 class="card-title">Transaksi Hari Ini</h5>
-          <h2 class="fw-bold">{{ $todayTransactions }}</h2>
-          <small class="text-white-50">Transaksi berhasil</small>
+      <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-body text-center py-4">
+          <div class="icon-circle mb-3 bg-success-subtle text-success">
+            <i class="fas fa-shopping-cart fa-2x"></i>
+          </div>
+          <h6 class="text-uppercase text-muted">Transaksi Hari Ini</h6>
+          <h2 class="fw-bold text-dark">{{ $todayTransactions }}</h2>
+          <small class="text-secondary">Transaksi berhasil</small>
         </div>
       </div>
     </div>
 
     <div class="col-md-6">
-      <div class="card bg-gradient-warning text-dark shadow rounded-4 h-100">
-        <div class="card-body d-flex flex-column justify-content-center text-center py-5">
-          <i class="fas fa-coins fa-2x mb-2"></i>
-          <h5 class="card-title">Total Pendapatan</h5>
-          <h2 class="fw-bold">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h2>
-          <small class="text-muted">Pendapatan hari ini</small>
+      <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-body text-center py-4">
+          <div class="icon-circle mb-3 bg-warning-subtle text-warning">
+            <i class="fas fa-coins fa-2x"></i>
+          </div>
+          <h6 class="text-uppercase text-muted">Total Pendapatan</h6>
+          <h2 class="fw-bold text-dark">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h2>
+          <small class="text-secondary">Pendapatan hari ini</small>
         </div>
       </div>
     </div>
 
     {{-- Riwayat Transaksi Terbaru --}}
     <div class="col-12">
-      <div class="card shadow-sm rounded-4">
-        <div class="card-header bg-light rounded-top-4 d-flex justify-content-between align-items-center">
-          <h5 class="mb-0"><i class="fas fa-receipt me-2 text-primary"></i>Riwayat Transaksi Terbaru</h5>
-           
+      <div class="card shadow-sm rounded-4 border-0">
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 text-dark"><i class="fas fa-receipt me-2 text-primary"></i>Riwayat Transaksi Terbaru</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
           @if($recentSales->isEmpty())
-            <p class="text-muted text-center my-4">Belum ada transaksi terbaru.</p>
+            <p class="text-center text-muted my-4">Belum ada transaksi terbaru.</p>
           @else
             <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+              <table class="table table-borderless table-hover align-middle mb-0">
+                <thead class="bg-light text-muted">
                   <tr>
                     <th>#</th>
                     <th>Invoice</th>
@@ -53,19 +55,18 @@
                 </thead>
                 <tbody>
                   @foreach($recentSales as $sale)
-                  <tr class="table-row-hover">
+                  <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $sale->invoice_number }}</td>
+                    <td class="fw-medium text-dark">{{ $sale->invoice_number }}</td>
                     <td>Rp {{ number_format($sale->total_amount, 0, ',', '.') }}</td>
                     <td>
-                      <span class="badge bg-{{ $sale->payment_status === 'paid' ? 'success' : 'warning' }}">
+                      <span class="badge rounded-pill {{ $sale->payment_status === 'paid' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning' }}">
                         {{ ucfirst($sale->payment_status) }}
                       </span>
                     </td>
                     <td>{{ $sale->created_at->format('d M Y, H:i') }}</td>
                     <td>
-                      <a href="{{ route('cashier.transactions.show', $sale->id) }}"
-                         class="btn btn-sm btn-outline-primary">
+                      <a href="{{ route('cashier.transactions.show', $sale->id) }}" class="btn btn-sm btn-outline-primary px-3 rounded-pill">
                         Detail
                       </a>
                     </td>
@@ -82,31 +83,34 @@
   </div>
 </div>
 
-{{-- Dark Mode Script --}}
-<script>
-  document.getElementById('toggleDark').addEventListener('click', () => {
-    document.body.classList.toggle('bg-dark');
-    document.body.classList.toggle('text-white');
-  });
-</script>
-
-{{-- Tambahan CSS --}}
+@push('styles')
 <style>
-  .bg-gradient-success {
-    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
-  }
-  .bg-gradient-warning {
-    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
-  }
-  .table-row-hover:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-  #toggleDark {
-    transition: background-color 0.3s, color 0.3s;
-  }
-  #toggleDark:hover {
-    background-color: #6c757d;
-    color: #fff;
-  }
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+.bg-success-subtle { background-color: #e6f4ea; }
+.bg-warning-subtle { background-color: #fff9e6; }
+.card {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+.table-borderless th,
+.table-borderless td {
+  border: none;
+}
 </style>
+@endpush
+
 @endsection

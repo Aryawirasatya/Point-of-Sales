@@ -54,6 +54,24 @@
       </a>
     </div>
 
+    <!-- Kartu Ringkasan Penjualan (Summary Sales) -->
+    <div class="col-md-4">
+      <a href="{{ route('admin.admin.reports.summary_sales') }}" class="text-decoration-none">
+        <div class="card shadow-sm border-0 rounded-4 h-100 hover-shadow">
+          <div class="card-body d-flex align-items-center">
+            <div class="me-3">
+              <i class="fas fa-chart-line fa-2x text-info"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="mb-0 text-dark">Ringkasan Penjualan</h5>
+              <small class="text-muted">Daily, Weekly, Monthly</small>
+            </div>
+            <i class="fas fa-chevron-right text-muted"></i>
+          </div>
+        </div>
+      </a>
+    </div>
+
   </div>
 </div>
 @endsection

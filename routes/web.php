@@ -87,6 +87,15 @@ Route::middleware(['auth', 'checkrole:admin'])
          ->name('reports.sales.pdf');
     Route::get('reports/stock-changes/pdf', [ReportController::class, 'stockChangesPdf'])
          ->name('reports.stock_changes.pdf');
+
+      Route::get('reports/summary-sales', [ReportController::class, 'summarySales'])
+             ->name('admin.reports.summary_sales');
+
+        // 3) Export Excel untuk Summary Sales
+        Route::get('reports/summary-sales/export-excel', [ReportController::class, 'summarySalesExportExcel'])
+             ->name('admin.reports.summary_sales.export_excel');
+     Route::get('reports/summary-sales/export-pdf', [ReportController::class, 'summarySalesExportPdf'])
+              ->name('admin.reports.summary_sales.export_pdf');
 });
 
 /*

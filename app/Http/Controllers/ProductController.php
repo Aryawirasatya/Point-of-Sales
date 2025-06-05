@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Products;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // Tambahkan baris ini untuk mengimpor Storage
-use Illuminate\Support\Str; // pastikan ada ini di atas file
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -41,39 +41,40 @@ class ProductController extends Controller
     {
         // Validasi input dari pengguna
         $request->validate([
-            'name' => 'required|string|max:255',
-            'barcode' => 'nullable',
-            'category_id' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
+            'name'           => 'required|string|max:255',
+            'barcode'        => 'nullable',
+            'category_id'    => 'required|exists:categories,id',
+            'description'    => 'nullable|string',
+            'price'          => 'required|numeric',
             'stock_quantity' => 'required|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
+            'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Generate barcode unik jika tidak diinput
         do {
             $barcode = 'PRD-' . strtoupper(Str::random(8));
         } while (Products::where('barcode', $barcode)->exists());
 
-        // Menyimpan gambar jika ada
+        // Menyimpan path gambar (jika ada)
         $imagePath = null;
         if ($request->hasFile('image')) {
-            // Simpan gambar ke storage
+            // Simpan file ke disk 'public' di folder 'products'
+            // → file disimpan di storage/app/public/products/...
             $imagePath = $request->file('image')->store('products', 'public');
-
         }
 
-        // Menyimpan data produk
+        // Simpan data produk baru
         Products::create([
-            'name' => $request->name,
-            'barcode' => $barcode,
-            'category_id' => $request->category_id,
-            'description' => $request->description,
-            'price' => $request->price,
+            'name'           => $request->name,
+            'barcode'        => $barcode,
+            'category_id'    => $request->category_id,
+            'description'    => $request->description,
+            'price'          => $request->price,
             'stock_quantity' => $request->stock_quantity,
-            'image' => $imagePath, // Simpan path gambar
+            'image'          => $imagePath, // bisa null jika tidak ada upload
         ]);
 
-        // Redirect ke halaman daftar produk dengan pesan sukses
+        // Redirect dengan pesan sukses
         return redirect()->route('products.index')->with('success', 'Produk berhasil ditambahkan!');
     }
 
@@ -82,7 +83,8 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        // Menampilkan detail produk berdasarkan ID (jika diperlukan)
+        // (Opsional) Jika diperlukan detail produk, implementasikan di sini.
+        // Saat ini belum digunakan.
     }
 
     /**
@@ -96,7 +98,7 @@ class ProductController extends Controller
         // Ambil kategori yang aktif
         $categories = Category::where('status', 'active')->get();
 
-        // Tampilkan form untuk mengedit produk
+        // Tampilkan form edit produk
         return view('products.edit', compact('product', 'categories'));
     }
 
@@ -107,41 +109,42 @@ class ProductController extends Controller
     {
         // Validasi input dari pengguna
         $request->validate([
-            'name' => 'required|string|max:255',
-            'barcode' => 'nullable|string|max:255|unique:products,barcode,' . $id, // Pastikan tidak duplikat untuk produk yang sama
-            'category_id' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric',
+            'name'           => 'required|string|max:255',
+            'barcode'        => 'nullable|string|max:255|unique:products,barcode,' . $id,
+            'category_id'    => 'required|exists:categories,id',
+            'description'    => 'nullable|string',
+            'price'          => 'required|numeric',
             'stock_quantity' => 'required|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
+            'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Menemukan produk yang akan diupdate
+        // Cari produk yang akan diupdate
         $product = Products::findOrFail($id);
 
-        // Menyimpan gambar baru jika ada
+        // Jika ada file gambar baru yang diupload
         if ($request->hasFile('image')) {
-            // Hapus gambar lama jika ada
-            if ($product->image) {
-                Storage::delete($product->image);
+            // Hapus gambar lama di disk 'public' jika ada
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
             }
 
-            // Simpan gambar baru ke storage
-            $imagePath = $request->file('image')->store('public/products');
-            $product->image = $imagePath; // Update path gambar
+            // Simpan gambar baru ke disk 'public' di folder 'products'
+            $imagePath = $request->file('image')->store('products', 'public');
+            $product->image = $imagePath;
         }
 
-        // Update data produk
+        // Update data produk (selain image, karena sudah di-handle di atas)
         $product->update([
-            'name' => $request->name,
-            'barcode' => $request->barcode ?? $product->barcode,
-            'category_id' => $request->category_id,
-            'description' => $request->description,
-            'price' => $request->price,
+            'name'           => $request->name,
+            'barcode'        => $request->barcode ?? $product->barcode,
+            'category_id'    => $request->category_id,
+            'description'    => $request->description,
+            'price'          => $request->price,
             'stock_quantity' => $request->stock_quantity,
+            // 'image' tidak perlu ditulis lagi karena sudah diassign di atas jika ada perubahan
         ]);
 
-        // Redirect ke halaman daftar produk dengan pesan sukses
+        // Redirect dengan pesan sukses
         return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui!');
     }
 
@@ -150,18 +153,18 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        // Menemukan produk berdasarkan ID
+        // Temukan produk berdasarkan ID
         $product = Products::findOrFail($id);
 
-        // Hapus gambar produk jika ada
-        if ($product->image) {
-            Storage::delete($product->image); // Hapus gambar dari storage
+        // Hapus gambar dari disk 'public' jika ada
+        if ($product->image && Storage::disk('public')->exists($product->image)) {
+            Storage::disk('public')->delete($product->image);
         }
 
-        // Hapus produk dari database
+        // Hapus data produk dari database
         $product->delete();
 
-        // Redirect ke halaman daftar produk dengan pesan sukses
+        // Redirect dengan pesan sukses
         return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus!');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Products;        // Model produk Anda
 use App\Models\Sale;            // Model penjualan Anda
+use App\Models\SaleItem;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -31,8 +32,27 @@ class ReportController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.reports.products', compact('products'));
-    }
+        $produkTerlaris = SaleItem::selectRaw('product_id, SUM(quantity) as total_terjual')
+            ->groupBy('product_id')
+            ->orderByDesc('total_terjual')
+            ->with('product') // agar bisa akses $produk->product->name
+            ->limit(5)
+            ->get()
+            ->pluck('product')  // ambil data produk-nya
+            ->map(function ($product) {
+                $product->total_terjual = SaleItem::where('product_id', $product->id)->sum('quantity');
+                return $product;
+            });
+
+        // Produk dengan stok rendah (misalnya < 10)
+        $produkStokRendah = Products::where('stock_quantity', '<', 10)
+            ->orderBy('stock_quantity', 'asc')
+            ->limit(5)
+            ->get();
+
+
+            return view('admin.reports.products', compact('products','produkTerlaris', 'produkStokRendah'));
+        }
 
     /**
      * Tampilkan Laporan Transaksi (HTML)
@@ -70,23 +90,90 @@ class ReportController extends Controller
      */
     public function productsExcel()
 {
-    // a) Ambil data produk beserta kategori
-    $items = Products::with('category')->orderBy('name')->get();
+    // 1) Ambil semua produk
+    $allProducts = Products::with('category')
+        ->orderBy('name')
+        ->get();
 
-    // b) Buat objek Spreadsheet
+    // 2) Hitung Produk Terlaris (misal top 5)
+    $produkTerlaris = SaleItem::selectRaw('product_id, SUM(quantity) as total_terjual')
+        ->groupBy('product_id')
+        ->orderByDesc('total_terjual')
+        ->with('product')
+        ->limit(5)
+        ->get()
+        ->map(function ($saleItem) {
+            $p = $saleItem->product;
+            $p->total_terjual = $saleItem->total_terjual;
+            return $p;
+        });
+
+    // 3) Ambil Produk Stok Rendah (misal stok < 10, top 5)
+    $produkStokRendah = Products::where('stock_quantity', '<', 10)
+        ->orderBy('stock_quantity', 'asc')
+        ->limit(5)
+        ->get();
+
+    // 4) Buat objek Spreadsheet
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
+    $sheet->setTitle('Laporan Produk');
 
-    // c) Tulis header (baris 1)
+    $row = 1;
+
+    // --- Bagian A: Produk Terlaris ---
+    $sheet->setCellValue("A{$row}", 'Produk Terlaris (Top 5)');
+    $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(14);
+    $row += 2;
+
+    // Header untuk Produk Terlaris
+    $sheet->fromArray(['Nama Produk', 'Total Terjual'], null, "A{$row}");
+    $sheet->getStyle("A{$row}:B{$row}")->getFont()->setBold(true);
+    $row++;
+
+    foreach ($produkTerlaris as $p) {
+        $sheet->setCellValue("A{$row}", $p->name);
+        $sheet->setCellValue("B{$row}", $p->total_terjual);
+        $row++;
+    }
+
+    // satu baris kosong sebelum bagian berikutnya
+    $row += 1;
+
+    // --- Bagian B: Produk Stok Rendah ---
+    $sheet->setCellValue("A{$row}", 'Produk Stok Rendah (Stok < 10)');
+    $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(14);
+    $row += 2;
+
+    // Header untuk Produk Stok Rendah
+    $sheet->fromArray(['Nama Produk', 'Stok Tersisa'], null, "A{$row}");
+    $sheet->getStyle("A{$row}:B{$row}")->getFont()->setBold(true);
+    $row++;
+
+    foreach ($produkStokRendah as $p) {
+        $sheet->setCellValue("A{$row}", $p->name);
+        $sheet->setCellValue("B{$row}", $p->stock_quantity);
+        $row++;
+    }
+
+    // satu baris kosong sebelum bagian Semua Produk
+    $row += 1;
+
+    // --- Bagian C: Semua Produk ---
+    $sheet->setCellValue("A{$row}", 'Daftar Semua Produk');
+    $sheet->getStyle("A{$row}")->getFont()->setBold(true)->setSize(14);
+    $row += 2;
+
+    // Header untuk Semua Produk
     $sheet->fromArray(
-        ['Nama Produk','Kategori','Barcode','Harga','Stok'],
+        ['Nama Produk', 'Kategori', 'Barcode', 'Harga', 'Stok'],
         null,
-        'A1'
+        "A{$row}"
     );
+    $sheet->getStyle("A{$row}:E{$row}")->getFont()->setBold(true);
+    $row++;
 
-    // d) Tulis data mulai baris 2
-    $row = 2;
-    foreach ($items as $p) {
+    foreach ($allProducts as $p) {
         $sheet->setCellValue("A{$row}", $p->name);
         $sheet->setCellValue("B{$row}", $p->category->name ?? '-');
         $sheet->setCellValue("C{$row}", $p->barcode);
@@ -95,16 +182,22 @@ class ReportController extends Controller
         $row++;
     }
 
-    // e) Simpan file ke storage/app/exports
+    // Auto‑size kolom A sampai E
+    foreach (range('A', 'E') as $col) {
+        $sheet->getColumnDimension($col)->setAutoSize(true);
+    }
+
+    // 5) Simpan file ke storage/app/exports
     $filename = 'laporan-produk-' . now()->format('YmdHis') . '.xlsx';
     $path = storage_path("app/exports/{$filename}");
     (new Xlsx($spreadsheet))->save($path);
 
-    // f) Download dan hapus file setelah kirim
+    // 6) Download dan hapus file setelah kirim
     return response()
         ->download($path, 'laporan-produk.xlsx')
         ->deleteFileAfterSend(true);
 }
+
 
 
     /**
@@ -237,17 +330,43 @@ class ReportController extends Controller
     /**
      * Export Stok ke PDF
      */
-    public function productsPdf()
+public function productsPdf()
 {
-    // a) Ambil data
-    $items = Products::with('category')->orderBy('name')->get();
+    // a) Ambil data semua produk (untuk tabel “Semua Produk”)
+    $items = Products::with('category')
+        ->orderBy('name')
+        ->get();
 
-    // b) Generate PDF dari view
-    $pdf = Pdf::loadView('admin.reports.products_pdf', compact('items'));
+    // b) Hitung Produk Terlaris (mengambil top 5 berdasar total quantity di sale_items)
+    $produkTerlaris = SaleItem::selectRaw('product_id, SUM(quantity) as total_terjual')
+        ->groupBy('product_id')
+        ->orderByDesc('total_terjual')
+        ->with('product')      // agar bisa akses ->product->name
+        ->limit(5)
+        ->get()
+        ->map(function ($saleItem) {
+            $p = $saleItem->product;
+            $p->total_terjual = $saleItem->total_terjual;
+            return $p;
+        });
 
-    // c) Unduh
+    // c) Produk Stok Rendah (misal stok < 10, ambil 5 teratas urut naik)
+    $produkStokRendah = Products::where('stock_quantity', '<', 10)
+        ->orderBy('stock_quantity', 'asc')
+        ->limit(5)
+        ->get();
+
+    // d) Generate PDF dari view, kirim ketiga variabel
+    $pdf = Pdf::loadView('admin.reports.products_pdf', compact(
+        'items',
+        'produkTerlaris',
+        'produkStokRendah'
+    ));
+
+    // e) Unduh
     return $pdf->download('laporan-produk.pdf');
 }
+
 
 public function summarySales(Request $request)
     {

@@ -3,9 +3,18 @@
 @section('content')
 <div class="container py-4">
     <h2 class="mb-4 fw-semibold">📦 Daftar Produk</h2>
+    
+    {{-- Tombol tambah dan pencarian --}}
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+        <a href="{{ route('products.create') }}" class="btn btn-primary rounded-pill shadow-sm px-4 py-2" onclick="showModal(event, this)">
+            + Tambah Produk
+        </a>
+        <div class="flex-grow-1" style="max-width: 300px;">
+            <input id="search" type="search" class="form-control form-control-dark rounded-pill px-3 py-2 placeholder-white " placeholder="🔍 Cari produk...">
+        </div>
+    </div>
 
-    <a href="{{ route('products.create') }}" class="btn btn-primary mb-4 rounded-pill shadow-sm px-4 py-2" onclick="showModal(event, this)">+ Tambah Produk</a>
-
+    {{-- Alert sukses --}}
     @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
         {{ session('success') }}
@@ -13,9 +22,10 @@
     </div>
     @endif
 
-    <div class="row">
+    {{-- Daftar Produk --}}
+    <div class="row" id="product-list">
         @forelse ($products as $product)
-        <div class="col-6 col-md-4 col-lg-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-3 mb-4 product-card" data-name="{{ strtolower($product->name) }}">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden h-80 transition-card dark-card">
                 @if ($product->image)
                 <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" style="height: 250px; object-fit: cover;">
@@ -147,6 +157,18 @@
     .card-title {
         font-weight: 600;
     }
+
+    #search {
+        background-color: #2b2b2b;
+        border: 1px solid #555;
+        color: #fff;
+    }
+
+    #search::placeholder {
+    color: #ffffff !important;
+    opacity: 0.8; /* opsional, bisa disesuaikan */
+}
+
 </style>
 
 <script>
@@ -182,6 +204,7 @@ function showDescriptionModal(event, title, description) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Delete konfirmasi
     document.querySelectorAll('.form-delete-user').forEach(form => {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -200,6 +223,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     form.submit();
                 }
             });
+        });
+    });
+
+    // Live Search Produk
+    const searchInput = document.getElementById('search');
+    const productCards = document.querySelectorAll('.product-card');
+
+    searchInput.addEventListener('input', function () {
+        const keyword = this.value.trim().toLowerCase();
+
+        productCards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            card.style.display = name.includes(keyword) ? 'block' : 'none';
         });
     });
 });

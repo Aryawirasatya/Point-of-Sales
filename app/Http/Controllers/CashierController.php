@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Products;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,11 +28,15 @@ class CashierController extends Controller
             ->latest()
             ->take(5)
             ->get();
+        
+        $products = Products::orderBy('name')->get();
+
 
         return view('cashier.dashboard', compact(
             'todayTransactions',
             'todayRevenue',
-            'recentSales'
+            'recentSales',
+            'products'
         ));
     }
 }

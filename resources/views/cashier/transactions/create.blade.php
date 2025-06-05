@@ -129,12 +129,12 @@
   --bg-dark: #1c1c1c;
   --bg-secondary: #2b2b3d;
   --gradient-start: #4e54c8;
-  --gradient-end: #8f94fb;
+  --gradient-end:rgba(53, 107, 255, 0.4);
   --gradient-g: rgb(44, 46, 87);
 }
 
 .custom-card {
-  background: linear-gradient(145deg, rgb(32, 60, 101), rgba(143, 148, 251, 0.59));
+  background: linear-gradient(145deg ,rgb(47, 49, 58),rgb(25, 38, 60));
   color: #fff;
 }
 
@@ -151,7 +151,7 @@ body {
 }
 
 .btn-cart {
-  background-color: #4e54c8;
+  background-color:  rgb(13, 65, 114);
   border: 2px solid;
   width: 100%;
   color: #fff;
@@ -190,7 +190,7 @@ body {
 /* Tombol “Checkout” */
 .btn-cart:hover {
   /* Kembalikan warna ungu biru aslinya */
-  background-color: #4e54c8 !important;
+  background-color:rgb(78, 119, 200) !important;
   /* Pastikan teks tetap putih */
   color: #fff !important;
   box-shadow: none !important;
